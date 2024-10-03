@@ -1,0 +1,40 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    stdin_open: true
+    tty: true
+    environment:
+      - NODE_ENV=development
+    command: npm start
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "5001:5010"  # Changed to 5001 to avoid conflicts
+    volumes:
+      - ./backend:/app
+    stdin_open: true
+    tty: true
+    environment:
+      - NODE_ENV=development
+    command: npm run dev  # Corrected to use the 'dev' script
+    depends_on:
+      - db
+
+  db:
+    image: mongo
+    container_name: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - ./database:/data/db
